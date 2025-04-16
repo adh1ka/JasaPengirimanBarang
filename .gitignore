@@ -1,0 +1,29 @@
+# Binaries and build files
+/build/
+*.o
+*.out
+*.exe
+*.obj
+
+# Logs and temp files
+*.log
+*.tmp
+*.bak
+
+# IDE / Editor
+.vscode/
+.idea/
+*.code-workspace
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# CMake / Make / Ninja artifacts
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Backup
+*~
