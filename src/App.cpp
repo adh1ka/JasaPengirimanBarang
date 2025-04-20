@@ -5,49 +5,36 @@
 #include "Kurir.h"
 #include "Pengiriman.h"
 #include "Tracking.h"
-
-#include <iostream>
-#include <memory>
-
-void App::run() {
-    auto barangList = muatBarangDariFile("data/daftar_barang.txt");
-    std::cout << "\n=== DATA BARANG YANG DIMUAT ===\n";
-    for (const auto& b : barangList) {
-        b->info();
-        std::cout << "-----------------------------\n";
-    }
-
-    std::cout << "=== SIMULASI PENGIRIMAN ===" << std::endl;
-
-    // 1. Buat barang (Dokumen, Paket, FragileItem)
-    auto dokumen = std::make_shared<Dokumen>("B001", "Surat Penting", 0.2, "Andi", "Budi", 12);
-    auto paket = std::make_shared<Paket>("B002", "Paket Buku", 2.5, "Citra", "Dina", 30, 20, 10);
-    auto fragile = std::make_shared<FragileItem>("B003", "Vas Kaca", 1.0, "Eka", "Feri", true);
-
-    // 2. Buat kurir
-    Kurir kurir("K001", "Joko", "08123456789");
-
-    // 3. Buat pengiriman (misal kirim dokumen)
-    Pengiriman pengiriman("P001", dokumen, kurir);
-    pengiriman.info();
-
-    // 4. Tracking status
-    Tracking tracking("P001");
-    tracking.tambahLog("Paket sedang diproses");
-    pengiriman.updateStatus("Dalam perjalanan");
-    tracking.tambahLog("Kurir mengambil paket");
-    pengiriman.updateStatus("Terkirim");
-    tracking.tambahLog("Paket berhasil dikirim");
-
-    std::cout << "\n--- TRACKING ---\n";
-    tracking.tampilkanLog();
-    tracking.simpanKeFile("data/tracking_log.txt");
-
-    std::cout << "\n[SIMULASI SELESAI]\n";
-}
-
 #include <fstream>
 #include <sstream>
+#include <iostream>
+#include <memory>
+#include <algorithm>
+
+
+void App::run() {
+    int pilihan;
+    do {
+        std::cout << "\n=== MENU UTAMA ===\n";
+        std::cout << "1. Tambah Barang\n";
+        std::cout << "2. Lihat Daftar Barang\n";
+        std::cout << "3. Buat Pengiriman\n";
+        std::cout << "4. Lihat Tracking Log\n";
+        std::cout << "0. Keluar\n";
+        std::cout << "Pilih menu: ";
+        std::cin >> pilihan;
+        std::cin.ignore();
+
+        switch (pilihan) {
+            case 1: tambahBarang(); break;
+            case 2: tampilkanBarang(); break;
+            case 3: buatPengiriman(); break;
+            case 4: tampilkanTracking(); break;
+            case 0: std::cout << "Keluar dari aplikasi.\n"; break;
+            default: std::cout << "Pilihan tidak valid.\n";
+        }
+    } while (pilihan != 0);
+}
 
 std::vector<std::shared_ptr<Barang>> App::muatBarangDariFile(const std::string& filepath) {
     std::vector<std::shared_ptr<Barang>> daftar;
@@ -97,3 +84,103 @@ std::vector<std::shared_ptr<Barang>> App::muatBarangDariFile(const std::string& 
     return daftar;
 }
 
+void App::tambahBarang() {
+    std::ofstream file("data/daftar_barang.txt", std::ios::app);
+    int jenis;
+    std::cout << "Jenis Barang:\n1. Dokumen\n2. Paket\n3. Fragile Item\nPilih: ";
+    std::cin >> jenis; std::cin.ignore();
+
+    std::string id, nama, pengirim, penerima;
+    double berat;
+
+    std::cout << "ID: "; std::getline(std::cin, id);
+    std::cout << "Nama: "; std::getline(std::cin, nama);
+    std::cout << "Berat (kg): "; std::cin >> berat; std::cin.ignore();
+    std::cout << "Pengirim: "; std::getline(std::cin, pengirim);
+    std::cout << "Penerima: "; std::getline(std::cin, penerima);
+
+    if (jenis == 1) {
+        int halaman;
+        std::cout << "Jumlah Halaman: "; std::cin >> halaman;
+        file << "Dokumen|" << id << "|" << nama << "|" << berat << "|"
+             << pengirim << "|" << penerima << "|" << halaman << "\n";
+    } else if (jenis == 2) {
+        double p, l, t;
+        std::cout << "Panjang Lebar Tinggi (cm): ";
+        std::cin >> p >> l >> t;
+        file << "Paket|" << id << "|" << nama << "|" << berat << "|"
+             << pengirim << "|" << penerima << "|" << p << "|" << l << "|" << t << "\n";
+    } else if (jenis == 3) {
+        int asuransi;
+        std::cout << "Perlu Asuransi? (1=Ya, 0=Tidak): "; std::cin >> asuransi;
+        file << "FragileItem|" << id << "|" << nama << "|" << berat << "|"
+             << pengirim << "|" << penerima << "|" << asuransi << "\n";
+    } else {
+        std::cout << "Jenis tidak dikenal.\n";
+    }
+
+    file.close();
+    std::cout << "Barang berhasil ditambahkan.\n";
+}
+
+void App::tampilkanBarang() {
+    auto list = muatBarangDariFile("data/daftar_barang.txt");
+    if (list.empty()) {
+        std::cout << "Tidak ada barang.\n";
+        return;
+    }
+
+    for (const auto& b : list) {
+        b->info();
+        std::cout << "---------------------------\n";
+    }
+}
+
+void App::buatPengiriman() {
+    std::string idPengiriman, idBarang, idKurir, namaKurir, telpKurir;
+    std::cout << "ID Pengiriman: "; std::getline(std::cin, idPengiriman);
+    std::cout << "ID Barang (harus sesuai): "; std::getline(std::cin, idBarang);
+    std::cout << "ID Kurir: "; std::getline(std::cin, idKurir);
+    std::cout << "Nama Kurir: "; std::getline(std::cin, namaKurir);
+    std::cout << "No Telepon Kurir: "; std::getline(std::cin, telpKurir);
+
+    auto barangList = muatBarangDariFile("data/daftar_barang.txt");
+    auto it = std::find_if(barangList.begin(), barangList.end(), [&](const auto& b) {
+        return b->getId() == idBarang;
+    });
+
+    if (it == barangList.end()) {
+        std::cout << "Barang tidak ditemukan.\n";
+        return;
+    }
+
+    Kurir kurir(idKurir, namaKurir, telpKurir);
+    Pengiriman pengiriman(idPengiriman, *it, kurir);
+    pengiriman.updateStatus("Diproses");
+
+    Tracking track(idPengiriman);
+    track.tambahLog("Paket didaftarkan");
+    track.simpanKeFile("data/tracking_log.txt");
+
+    std::ofstream pengirimanFile("data/pengiriman.txt", std::ios::app);
+    pengirimanFile << idPengiriman << "|" << idBarang << "|" << idKurir << "|Diproses\n";
+    pengirimanFile.close();
+
+    std::cout << "Pengiriman berhasil dibuat.\n";
+}
+
+void App::tampilkanTracking() {
+    std::ifstream file("data/tracking_log.txt");
+    std::string baris;
+
+    if (!file) {
+        std::cout << "Tracking log belum tersedia.\n";
+        return;
+    }
+
+    std::cout << "\n=== TRACKING LOG ===\n";
+    while (std::getline(file, baris)) {
+        std::cout << baris << "\n";
+    }
+    file.close();
+}

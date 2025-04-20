@@ -10,6 +10,11 @@ public:
 
 private:
     std::vector<std::shared_ptr<Barang>> muatBarangDariFile(const std::string& filepath);
+    void tambahBarang();
+    void tampilkanBarang();
+    void buatPengiriman();
+    void tampilkanTracking();
+
 };
 
 #endif
