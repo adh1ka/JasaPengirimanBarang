@@ -11,3 +11,12 @@ void FragileItem::info() const {
     std::cout << "Tipe: Fragile Item, Perlu Asuransi: " 
               << (perluAsuransi ? "Ya" : "Tidak") << "\n";
 }
+
+double FragileItem::hitungBiaya() const {
+    // Biaya dasar berdasarkan berat + biaya asuransi jika perlu
+    double biaya = berat * 15000; // 15.000 per kg
+    if (perluAsuransi) {
+        biaya += 20000; // Tambah biaya asuransi jika diperlukan
+    }
+    return biaya;
+}

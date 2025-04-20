@@ -121,7 +121,14 @@ void App::tambahBarang() {
 
     file.close();
     std::cout << "Barang berhasil ditambahkan.\n";
+
+    // Tampilkan biaya barang yang baru ditambahkan
+    auto list = muatBarangDariFile("data/daftar_barang.txt");
+    auto addedItem = list.back();
+    addedItem->info();  // Info barang yang baru ditambahkan
+    std::cout << "Biaya Pengiriman: " << addedItem->hitungBiaya() << " IDR\n";
 }
+
 
 void App::tampilkanBarang() {
     auto list = muatBarangDariFile("data/daftar_barang.txt");
@@ -130,11 +137,14 @@ void App::tampilkanBarang() {
         return;
     }
 
+    std::cout << "\n=== DAFTAR BARANG ===\n";
     for (const auto& b : list) {
-        b->info();
+        b->info();  // Tampilkan info barang
+        std::cout << "Biaya Pengiriman: " << b->hitungBiaya() << " IDR\n";
         std::cout << "---------------------------\n";
     }
 }
+
 
 void App::buatPengiriman() {
     std::string idPengiriman, idBarang, idKurir, namaKurir, telpKurir;

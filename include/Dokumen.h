@@ -12,6 +12,7 @@ public:
             std::string pengirim, std::string penerima, int jumlahHalaman);
 
     void info() const override;
+    double hitungBiaya() const override;
 };
 
 #endif

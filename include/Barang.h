@@ -17,6 +17,7 @@ public:
     virtual ~Barang() = default;
 
     virtual void info() const;
+    virtual double hitungBiaya() const = 0; // virtual pure function
 
     std::string getId() const;
     double getBerat() const;

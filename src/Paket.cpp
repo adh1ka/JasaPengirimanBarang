@@ -11,3 +11,8 @@ void Paket::info() const {
     Barang::info();
     std::cout << "Tipe: Paket, Dimensi: " << panjang << "x" << lebar << "x" << tinggi << " cm\n";
 }
+
+double Paket::hitungBiaya() const {
+    // Biaya berdasarkan volume (misalnya 100 per cm^3)
+    return (panjang * lebar * tinggi) * 100;
+}

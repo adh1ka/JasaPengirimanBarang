@@ -13,6 +13,7 @@ public:
                 bool perluAsuransi);
 
     void info() const override;
+    double hitungBiaya() const override;
 };
 
 #endif

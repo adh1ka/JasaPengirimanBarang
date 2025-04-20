@@ -13,6 +13,7 @@ public:
           double panjang, double lebar, double tinggi);
 
     void info() const override;
+    double hitungBiaya() const override;
 };
 
 #endif
