@@ -1,24 +1,30 @@
+# Compiler dan flags
 CXX = g++
-CXXFLAGS = -Iinclude -Wall -std=c++17
+CXXFLAGS = -std=c++17 -Wall -Iinclude
+
+# Direktori dan file
 SRC_DIR = src
-BUILD_DIR = build
+OBJ_DIR = build
+BIN = $(OBJ_DIR)/main
 
-SOURCES := $(wildcard $(SRC_DIR)/*.cpp)
-OBJECTS := $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SOURCES))
+# Semua file cpp di src/
+SRCS = $(wildcard $(SRC_DIR)/*.cpp)
+OBJS = $(SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
-TARGET = $(BUILD_DIR)/app
+# Target default
+all: $(BIN)
 
-all: $(TARGET)
+# Link semua object file ke binary
+$(BIN): $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $^
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@mkdir -p $(BUILD_DIR)
+# Compile setiap .cpp ke .o
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(OBJ_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(TARGET): $(OBJECTS)
-	$(CXX) $(CXXFLAGS) $^ -o $@
-
-run: $(TARGET)
-	./$(TARGET)
-
+# Clean
 clean:
-	rm -rf $(BUILD_DIR)/*
+	rm -rf $(OBJ_DIR)/*
+
+.PHONY: all clean
