@@ -18,6 +18,7 @@ public:
 
     void updateStatus(const std::string& statusBaru);
     void info() const;
+    void distribusiBarang(const std::vector<std::shared_ptr<Pengiriman>>& pengirimanList);
 
     std::string getStatus() const;
     std::string getIdPengiriman() const;
