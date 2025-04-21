@@ -14,7 +14,6 @@ private:
     void tampilkanBarang();
     void buatPengiriman();
     void tampilkanTracking();
-
 };
 
 #endif
