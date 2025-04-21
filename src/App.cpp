@@ -147,12 +147,18 @@ void App::tampilkanBarang() {
 
 
 void App::buatPengiriman() {
-    std::string idPengiriman, idBarang, idKurir, namaKurir, telpKurir;
+    std::string idPengiriman, idBarang, idKurir, namaKurir, telpKurir, kendaraanKurir, kotaTujuan;
+    double kapasitasKurir;
     std::cout << "ID Pengiriman: "; std::getline(std::cin, idPengiriman);
-    std::cout << "ID Barang (harus sesuai): "; std::getline(std::cin, idBarang);
+    std::cout << "ID Barang (yang sudah ditambahkan): "; std::getline(std::cin, idBarang);
     std::cout << "ID Kurir: "; std::getline(std::cin, idKurir);
     std::cout << "Nama Kurir: "; std::getline(std::cin, namaKurir);
-    std::cout << "No Telepon Kurir: "; std::getline(std::cin, telpKurir);
+    std::cout << "No Telepon: "; std::getline(std::cin, telpKurir);
+    std::cout << "Kendaraan: "; std::getline(std::cin, kendaraanKurir);
+    std::cout << "Kapasitas Kendaraan (kg): "; std::cin >> kapasitasKurir;
+    std::cin.ignore();
+    std::cout << "Kota Tujuan (Contoh: Jakarta, Bandung, Semarang, dll): ";
+    std::getline(std::cin, kotaTujuan);
 
     auto barangList = muatBarangDariFile("data/daftar_barang.txt");
     auto it = std::find_if(barangList.begin(), barangList.end(), [&](const auto& b) {
@@ -164,20 +170,23 @@ void App::buatPengiriman() {
         return;
     }
 
-    Kurir kurir(idKurir, namaKurir, telpKurir);
-    Pengiriman pengiriman(idPengiriman, *it, kurir);
+    Kurir kurir(idKurir, namaKurir, telpKurir, kendaraanKurir, kapasitasKurir);
+    Pengiriman pengiriman(idPengiriman, *it, kurir, kotaTujuan);
+
+    pengiriman.prosesPengiriman();
     pengiriman.updateStatus("Diproses");
 
     Tracking track(idPengiriman);
-    track.tambahLog("Paket didaftarkan");
+    track.tambahLog("Paket dikirim ke " + kotaTujuan);
     track.simpanKeFile("data/tracking_log.txt");
 
-    std::ofstream pengirimanFile("data/pengiriman.txt", std::ios::app);
-    pengirimanFile << idPengiriman << "|" << idBarang << "|" << idKurir << "|Diproses\n";
-    pengirimanFile.close();
+    std::ofstream out("data/pengiriman.txt", std::ios::app);
+    out << idPengiriman << "|" << idBarang << "|" << idKurir << "|" << kotaTujuan << "|" << "Diproses\n";
+    out.close();
 
-    std::cout << "Pengiriman berhasil dibuat.\n";
+    std::cout << "Pengiriman berhasil dibuat dan diproses.\n";
 }
+
 
 void App::tampilkanTracking() {
     std::ifstream file("data/tracking_log.txt");

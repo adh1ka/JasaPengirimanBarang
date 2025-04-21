@@ -11,16 +11,15 @@ private:
     std::string idPengiriman;
     std::shared_ptr<Barang> barang;
     Kurir kurir;
-    std::string status; // Contoh: "Dalam Perjalanan", "Terkirim"
+    std::string status;
+    std::string kotaTujuan;
 
 public:
-    Pengiriman(std::string id, std::shared_ptr<Barang> barang, Kurir kurir);
+    Pengiriman(std::string id, std::shared_ptr<Barang> barang, Kurir kurir, std::string kotaTujuan);
 
+    void prosesPengiriman();
     void updateStatus(const std::string& statusBaru);
     void info() const;
-    void distribusiBarang(const std::vector<std::shared_ptr<Pengiriman>>& pengirimanList);
-
-    std::string getStatus() const;
     std::string getIdPengiriman() const;
 };
 

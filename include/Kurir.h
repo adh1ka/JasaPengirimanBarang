@@ -8,8 +8,8 @@ private:
     std::string id;
     std::string nama;
     std::string noTelepon;
-    std::string kendaraan;   // Tambahkan atribut kendaraan
-    double kapasitas;        // Tambahkan kapasitas (dalam kg)
+    std::string kendaraan;
+    double kapasitas;
 
 public:
     Kurir(std::string id, std::string nama, std::string noTelepon, std::string kendaraan, double kapasitas);
@@ -18,8 +18,9 @@ public:
     std::string getNama() const;
     std::string getKendaraan() const;
     double getKapasitas() const;
-    
     void info() const;
+
+    std::string pilihRute(const std::string& kotaTujuan);
 };
 
 #endif

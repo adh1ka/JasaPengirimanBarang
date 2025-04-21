@@ -1,22 +1,28 @@
 #include "Pengiriman.h"
 #include <iostream>
 
-Pengiriman::Pengiriman(std::string id, std::shared_ptr<Barang> barang, Kurir kurir)
-    : idPengiriman(id), barang(barang), kurir(kurir), status("Diproses") {}
+Pengiriman::Pengiriman(std::string id, std::shared_ptr<Barang> barang, Kurir kurir, std::string kotaTujuan)
+    : idPengiriman(id), barang(barang), kurir(kurir), kotaTujuan(kotaTujuan), status("Diproses") {}
+
+void Pengiriman::prosesPengiriman() {
+    if (kurir.getKapasitas() < barang->getBerat()) {
+        std::cout << "Kapasitas kurir tidak mencukupi.\n";
+        return;
+    }
+    updateStatus("Dalam perjalanan");
+    std::cout << kurir.pilihRute(kotaTujuan) << "\n";
+}
 
 void Pengiriman::updateStatus(const std::string& statusBaru) {
     status = statusBaru;
 }
 
 void Pengiriman::info() const {
-    std::cout << "Pengiriman ID: " << idPengiriman << "\n";
+    std::cout << "ID Pengiriman: " << idPengiriman << "\n";
     barang->info();
     kurir.info();
-    std::cout << "Status: " << status << "\n";
-}
-
-std::string Pengiriman::getStatus() const {
-    return status;
+    std::cout << "Tujuan: " << kotaTujuan << "\n"
+              << "Status: " << status << "\n";
 }
 
 std::string Pengiriman::getIdPengiriman() const {
